@@ -2,8 +2,11 @@ import java.awt.Container;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Scanner;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -17,13 +20,15 @@ public class Main implements ActionListener {
 	JButton encryptButton = new JButton("Encrypt");
 	JButton decryptButton = new JButton("Decrypt");
 	
-	JTextField findInputFile = new JTextField("Type in the input file name here.");
+	JTextField findFile = new JTextField("Type in the input file name here.");
 	JTextField inputDecryptNumber = new JTextField("Input the number attached to your decrypted files here");
 	JTextField decryptNumber = new JTextField(); // number to use TO DECRYPT AN ECNRYPTED FILE
 	JTextField encryptNumber = new JTextField(); // number added TO AN ENCRYPTED NORMAL FILE
 
 	Container left = new Container();
 	Container right = new Container();
+	
+	Scanner fileInput;
 
 	public Main() {
 		frame.setSize(1000, 750);
@@ -32,7 +37,7 @@ public class Main implements ActionListener {
 		left.setLayout(new GridLayout(3, 1));
 		right.setLayout(new GridLayout(3, 1));
 
-		left.add(findInputFile);
+		left.add(findFile);
 		left.add(encryptButton);
 		encryptButton.addActionListener(this);
 		left.add(encryptNumber);
@@ -57,7 +62,7 @@ public class Main implements ActionListener {
 		frame.repaint();
 
 		int randomNum = (int) (Math.random() * 1000); // a random number is used to name the sort file so that a single
-		// file wont be overwritten over
+													  // file wont be written over when a new file is written to
 		PrintWriter writer; // sourced from
 							// https://stackoverflow.com/questions/2885173/how-do-i-create-a-file-and-write-to-it-in-java
 		try {
@@ -77,6 +82,31 @@ public class Main implements ActionListener {
 	public static void main(String[] args) {
 		new Main();
 	}
+	
+	public void getFileInput() {
+		try { 
+			 fileInput = new Scanner(new File(findFile.getText() + ".txt"));
+		}
+		// If the file is not found, then print a statement saying that the file is not
+		// found
+		catch (FileNotFoundException ex) {
+			ex.printStackTrace();
+			System.exit(0);
+		}
+		// checks the input for the name of the text file
+		String infile = fileInput.nextLine();
+		//Get the input which is on the next line of the file
+		char[] inputStringArray = new char[infile.length()];
+		//creates a char array which contains all the characters from the file
+		for (int i = 0; i < infile.length(); i++) {
+			//goes through the text in the file
+			inputStringArray[i] = infile.charAt(i);
+		}
+		//***********printing is just for testing ********
+		System.out.println(inputStringArray);
+		//***********printing is just for testing ********
+
+}
 
 	// This is a method to generate a random 64 bit binary key
 	public String GenerateKey() {
@@ -95,7 +125,11 @@ public class Main implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
-		// TODO Auto-generated method stub
+		if (arg0.getSource().equals(encryptButton)) { //when the encryption button is pressed
+			String key = GenerateKey();
+			
+			getFileInput();
+		}
 		
 	}
 
